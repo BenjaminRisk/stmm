@@ -1,0 +1,33 @@
+function pathsList = make_HCPmotionList(HCP_path,paradigm_phaseencoding,nSubject)
+%This function creates a list of the directories and file names containing the values of
+%the 6 parameters from the affine registration to be used as movement
+%regressors. The subjects are chosen in the order in which they appear when using the
+%<ls> unix command.
+%   This function aids in the creation of lists that can then be input into
+%   functions that build matrices of motion parameters for the special case of
+%   the HCP data.
+% INPUT:
+%   HCP_path:  string containing the path to the HCP sampler data
+%
+%   paradigm_phaseencoding:  string containing the name of the folder
+%   containing the results of the desired paradigm along with 
+%   the phase-encoding direction (either RL or LR), e.g., "tfMRI_MOTOR_RL"
+%
+%   nSubject: the desired number of subjects for use in the analysis.
+%
+% OUTPUT:
+%   pathsList: a list of length nsubjects of the directories containing the
+%   HCP motion data for each subject. (The subjects chosen are the first nsubjects
+%   when listed using ls, which can be viewed by printing pathsList.)
+%
+
+%create list of all subjects:
+subjects = regexp(ls(HCP_path),'\s+','split');
+subjects = subjects(1:nSubject); %because sometimes a trailing "" appears in the list
+pathsList = cell(1,nSubject);
+for n=1:nSubject
+    subject = char(subjects(n));
+    pathsList(n) = {[HCP_path,'/',subject,'/MNINonLinear/Results/',paradigm_phaseencoding,...
+        '/Movement_Regressors.txt']};
+end
+end
